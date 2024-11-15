@@ -78,7 +78,7 @@ export abstract class DestructibleExtension extends Extension {
 
 const updateTheme = (settings: Gio.Settings): void => {
   const scheme = settings.get_string("color-scheme");
-  if (scheme === "prefers-dark") {
+  if (scheme === "prefer-dark") {
     console.log("Enabling dark gtk3 theme");
     settings.set_string("gtk-theme", "Adwaita-dark");
   } else {
