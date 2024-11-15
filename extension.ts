@@ -76,18 +76,23 @@ export abstract class DestructibleExtension extends Extension {
   }
 }
 
+const updateTheme = (settings: Gio.Settings): void => {
+  const scheme = settings.get_string("color-scheme");
+  if (scheme === "prefers-dark") {
+    console.log("Enabling dark gtk3 theme");
+    settings.set_string("gtk-theme", "Adwaita-dark");
+  } else {
+    console.log("Resetting gtk3 theme to default");
+    settings.reset("gtk-theme");
+  }
+};
+
 export default class Gtk3AutoDark extends DestructibleExtension {
   override initialize(): Destructible {
     const settings = Gio.Settings.new("org.gnome.desktop.interface");
+    updateTheme(settings);
     const signalId = settings.connect("changed::color-scheme", () => {
-      const scheme = settings.get_string("color-scheme");
-      if (scheme === "prefers-dark") {
-        console.log("Enabling dark gtk3 theme");
-        settings.set_string("gtk-theme", "Adwaita-dark");
-      } else {
-        console.log("Resetting gtk3 theme to default");
-        settings.reset("gtk-theme");
-      }
+      updateTheme(settings);
     });
     return {
       destroy() {
