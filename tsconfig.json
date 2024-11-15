@@ -1,0 +1,4 @@
+{
+    "extends": "@swsnr/gsebuild/tsconfig.json",
+    "files": ["types.d.ts", "extension.ts"]
+}

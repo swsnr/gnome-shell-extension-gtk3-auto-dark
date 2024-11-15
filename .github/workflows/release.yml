@@ -1,0 +1,95 @@
+name: Release
+
+on:
+  push:
+    branches: [main]
+    tags: v*
+
+jobs:
+  build:
+    # Run build on main as well to make sure it's working before we make a release
+    runs-on: ubuntu-latest
+    container:
+      # Fedora 41 ships GNOME 47, i.e. the version we currently support
+      image: docker.io/fedora:41
+    steps:
+      # TODO: We probably want to strip away timestamps in the ZIP file to make
+      # it deterministic again, but Fedora doesn't package strip-nondeterminism,
+      # and its add-determinism doesn't seem to support ZIP files, see
+      # https://github.com/keszybz/add-determinism/issues/46
+      - name: Install git, gettext, and gnome-shell
+        run: dnf install -y --setopt=install_weak_deps=False git gettext gnome-shell
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: latest
+          cache: "npm"
+      - run: npm ci
+      - run: npm run pack
+      - run: b2sum *.zip > B2SUMS.txt
+        working-directory: dist
+      - uses: actions/upload-artifact@v4
+        with:
+          name: dist
+          path: "dist/*"
+
+  attest:
+    runs-on: ubuntu-latest
+    needs: build
+    permissions:
+      id-token: write
+      contents: read
+      attestations: write
+    # Only attest artifacts created for actual releases
+    if: ${{ startsWith(github.ref, 'refs/tags/') }}
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          path: dist
+          name: dist
+      - uses: actions/attest-build-provenance@v1
+        with:
+          subject-path: dist/*
+
+  create-release:
+    runs-on: ubuntu-latest
+    needs: build
+    permissions:
+      contents: write
+    # Only create a release on a tag
+    if: ${{ startsWith(github.ref, 'refs/tags/') }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          # This makes sure we actually get the tag message body down below,
+          # see https://github.com/actions/runner/issues/712
+          ref: "${{ github.ref }}"
+      - uses: actions/download-artifact@v4
+        with:
+          path: dist
+          name: dist
+      - uses: softprops/action-gh-release@v2
+        with:
+          files: "dist/*"
+          fail_on_unmatched_files: true
+
+  upload-ego:
+    runs-on: ubuntu-latest
+    needs: build
+    # Only upload releases from tags which denote a version, i.e. start with v
+    if: ${{ startsWith(github.ref, 'refs/tags/v') }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: latest
+          cache: "npm"
+      - run: npm ci
+      - uses: actions/download-artifact@v4
+        with:
+          path: dist
+          name: dist
+      - run: "npx gsebuild upload --no-interaction -c ./.ego-confirmation.json ./dist/picture-of-the-day@swsnr.de.shell-extension.zip"
+        env:
+          EGO_USERNAME: ${{ secrets.EGO_USERNAME }}
+          EGO_PASSWORD: ${{ secrets.EGO_PASSWORD }}

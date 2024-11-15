@@ -1,0 +1,8 @@
+{
+  "name": "Gtk3 Auto Dark",
+  "uuid": "gtk3-auto-dark@swsnr.de",
+  "description": "Automatically switch legacy Gtk3 applications to dark mode.",
+  "version-name": "47.0-dev",
+  "url": "https://github.com/swsnr/gnome-shell-extension-gtk3-auto-dark",
+  "shell-version": ["47"]
+}
