@@ -1,7 +1,12 @@
+# Packages
 /node_modules/
 
-/extension.js
+# Extension artifact
+/*.shell-extension.zip
+/*.shell-extension.zip.sig
 
-/*.tsbuildinfo
+# Editor things
+/.vscode/
 
-/dist/
+# Build output
+build/

@@ -1,4 +1,8 @@
 {
-    "extends": "@swsnr/gsebuild/tsconfig.json",
-    "files": ["types.d.ts", "extension.ts"]
+  "extends": "./tsconfig.base.json",
+  "compilerOptions": {
+    "noEmit": true,
+    "checkJs": true
+  },
+  "include": ["eslint.config.mjs", "gnome-shell.d.ts", "src/**/*.ts"]
 }
