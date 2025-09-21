@@ -4,7 +4,7 @@
   "private": true,
   "devDependencies": {
     "@eslint/js": "^9.36.0",
-    "@girs/gnome-shell": "^48.0.2",
+    "@girs/gnome-shell": "^49.0.1",
     "prettier": "^3.5.3",
     "typescript": "^5.9.2",
     "typescript-eslint": "^8.44.0"
