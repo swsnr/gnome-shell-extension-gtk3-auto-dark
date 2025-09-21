@@ -3,11 +3,11 @@
   "type": "module",
   "private": true,
   "devDependencies": {
-    "@eslint/js": "^9.28.0",
+    "@eslint/js": "^9.36.0",
     "@girs/gnome-shell": "^48.0.2",
     "prettier": "^3.5.3",
-    "typescript": "^5.8.3",
-    "typescript-eslint": "^8.34.0"
+    "typescript": "^5.9.2",
+    "typescript-eslint": "^8.44.0"
   },
   "overrides": {
     "@girs/accountsservice-1.0": "1.0.0-4.0.0-beta.25",
